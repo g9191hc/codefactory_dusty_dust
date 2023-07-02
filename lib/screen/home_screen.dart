@@ -1,9 +1,13 @@
+import 'package:dusty_dust/component/card_title.dart';
 import 'package:dusty_dust/component/category_card.dart';
 import 'package:dusty_dust/component/main_app_bar.dart';
+import 'package:dusty_dust/component/main_card.dart';
 import 'package:dusty_dust/component/main_drawer.dart';
 import 'package:dusty_dust/component/main_stat.dart';
 import 'package:dusty_dust/const/color.dart';
 import 'package:flutter/material.dart';
+
+import '../component/hourly_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,6 +26,10 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CategoryCard(),
+                const SizedBox(
+                  height: 16.0,
+                ),
+                HourlyCard(),
               ],
             ),
           ),
