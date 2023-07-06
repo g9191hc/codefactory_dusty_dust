@@ -8,7 +8,7 @@ class MainStat extends StatelessWidget {
   final String imgPath;
 
   //오염정도
-  final String level;
+  final String label;
 
   //오염수치
   final String stat;
@@ -20,7 +20,7 @@ class MainStat extends StatelessWidget {
     super.key,
     required this.category,
     required this.imgPath,
-    required this.level,
+    required this.label,
     required this.stat,
     required this.width,
   });
@@ -51,7 +51,7 @@ class MainStat extends StatelessWidget {
             height: 8.0,
           ),
           Text(
-            level,
+            label,
             style: ts,
           ),
           Text(

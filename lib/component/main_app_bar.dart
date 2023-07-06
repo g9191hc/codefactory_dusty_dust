@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../const/color.dart';
+import '../model/stat_model.dart';
+import '../model/status_model.dart';
+import '../utils/data_utils.dart';
 
 class MainAppBar extends StatelessWidget {
-  MainAppBar({super.key});
+  final String region;
+  final StatModel stat;
+  final StatusModel status;
+  final bool isExpanded;
+
+  MainAppBar({
+    super.key,
+    required this.stat,
+    required this.status,
+    required this.region,
+    required this.isExpanded,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +27,15 @@ class MainAppBar extends StatelessWidget {
     );
 
     return SliverAppBar(
+      pinned: true,
+      title: isExpanded
+          ? null
+          : Text(
+              '$region ${DataUtils.getHangulFromDateTime(dateTime: stat.dataTime)}',
+            ),
       expandedHeight: 500,
-      backgroundColor: primaryColor,
+      centerTitle: true,
+      backgroundColor: status.primaryColor,
       flexibleSpace: FlexibleSpaceBar(
         background: SafeArea(
           child: Container(
@@ -22,11 +43,11 @@ class MainAppBar extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  '서울',
+                  region,
                   style: ts,
                 ),
                 Text(
-                  DateTime.now().toString(),
+                  DataUtils.getHangulFromDateTime(dateTime: stat.dataTime),
                   style: ts.copyWith(
                     fontSize: 20,
                   ),
@@ -35,7 +56,7 @@ class MainAppBar extends StatelessWidget {
                   height: 20.0,
                 ),
                 Image.asset(
-                  'asset/img/mediocre.png',
+                  status.imagePath,
                   width: MediaQuery.of(context).size.width / 2,
                   fit: BoxFit.cover,
                 ),
@@ -43,7 +64,7 @@ class MainAppBar extends StatelessWidget {
                   height: 20.0,
                 ),
                 Text(
-                  '보통',
+                  status.label,
                   style: ts.copyWith(
                     fontSize: 40,
                   ),
@@ -52,7 +73,7 @@ class MainAppBar extends StatelessWidget {
                   height: 8.0,
                 ),
                 Text(
-                  '나쁘지않네요!',
+                  status.comment,
                   style: ts.copyWith(
                     fontSize: 20,
                   ),

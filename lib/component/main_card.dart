@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../const/color.dart';
 
 class MainCard extends StatelessWidget {
+  final Color backgroundColor;
   final Widget child;
 
-  const MainCard({super.key, required this.child,});
+  const MainCard({super.key, required this.child, required this.backgroundColor,});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class MainCard extends StatelessWidget {
             16.0,
           ),
         ),
-        color: lightColor,
+        color: backgroundColor,
         child: child
     );
   }
