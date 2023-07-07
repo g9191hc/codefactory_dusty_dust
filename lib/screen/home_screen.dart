@@ -5,6 +5,7 @@ import 'package:dusty_dust/model/stat_and_status_model.dart';
 import 'package:dusty_dust/repository/stat_repository.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 
 import '../component/hourly_card.dart';
 import '../const/regions.dart';
@@ -36,13 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
     scrollController.dispose();
   }
 
-
   //요청 함수는 async로 해야 함
   Future<Map<ItemCode, List<StatModel>>> fetchData() async {
-    Map<ItemCode, List<StatModel>> stats = {};
-
     //Future형 리스트 생성
-    List<Future> futures = [];
+    //List<Future>로 해도 되지만, Future<dynamic>으로 나오므로,
+    //다른코드에서 타입추정을 쉽게 하기 위해 비동기함수가 반환하는 타입을 Future의 제네릭으로 추가함
+    List<Future<List<StatModel>>> futures = [];
 
     //futures 리스트에 각 함수가 추가됨과 동시에 실행 됨 (각 함수들은 비동기로 실행되어야 하므로 await 붙이지 않음)
     for (ItemCode itemCode in ItemCode.values) {
@@ -59,13 +59,31 @@ class _HomeScreenState extends State<HomeScreen> {
     final results = await Future.wait(futures);
 
     for (int i = 0; i < results.length; i++) {
+      // results의 순차입력값 ItemCode의 값들이므로, results에 저장된 값들도 ItemCode와 동일한 순서로 저장되어 있음
       final key = ItemCode.values[i];
       final value = results[i];
 
-      stats.addAll({key: value});
+      final box = Hive.box<StatModel>(key.name);
+
+      for (StatModel stat in value) {
+        //StatModel의 필드 중 dataTime을 각 시간대로 받으므로 중복이 발생할 수 없으므로
+        //이 프로젝트에서는 그걸이용해서 키로 사용
+        box.put(stat.dataTime.toString(), stat);
+      }
     }
 
-    return stats;
+    return ItemCode.values.fold<Map<ItemCode, List<StatModel>>>(
+      //초기값(빈 Map)
+      {},
+          (previousMap, itemCode) {
+        final box = Hive.box<StatModel>(itemCode.name);
+        final returnValue = box.values.toList();
+
+        previousMap.addAll({itemCode:returnValue});
+
+        return previousMap;
+      },
+    );
   }
 
   scrollListener() {
@@ -186,6 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         );
-      },);
+      },
+    );
   }
 }
